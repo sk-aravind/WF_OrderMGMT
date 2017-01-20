@@ -1,0 +1,156 @@
+<template>
+  <div id="app" class="container">
+    <div class ="page-header">
+      <h1>WindFlower Orders</h1>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>New Order</h3>
+      </div>
+      <div class="panel-body">
+
+        <form id="form" class="form-inline" v-on:submit.prevent="addOrder">
+          <div class="form-group">
+            <label for="orderFlower">Flower:</label>
+            <input type="text" id="orderFlower" class="form-control" v-model="newOrder.flower">
+          </div>
+          <div class="form-group">
+            <label for="orderAddress">Address:</label>
+            <input type="text" id="orderAddress" class="form-control" v-model="newOrder.address">
+          </div>
+          <div class="form-group">
+            <label for="orderTiming">Timing:</label>
+            <input type="text" id="orderTiming" class="form-control" v-model="newOrder.timing">
+          </div>
+          <input type="submit" class="btn btn-primary" value="Add Book">
+        </form>
+        
+      </div>
+    </div>
+
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>Order Lists</h3>
+      </div>
+      <div class="panel-body">
+
+        <table class="table table-responsive">
+          <thead>
+
+            <tr>
+              <th>
+                Flower
+              </th>
+              <th>
+                Address
+              </th>
+              <th>
+                Timing
+              </th>
+              <th>
+                Delete
+              </th>
+              <th>
+                Fulfilled
+              </th>
+              
+            </tr>
+
+          </thead>
+          <tbody>
+            <tr v-for="order in orders" v-if="order.status=='ordered' ">
+              <td>
+                {{order.flower}}
+              <td>
+                {{order.address}} 
+              </td>
+              <td>
+                {{order.timing}} 
+              </td>
+              <td>
+                <span class="glyphicon glyphicon-trash" v-on:click="removeOrder(order)"></span>
+              </td>
+              <td>
+               <button class="btn btn-success" v-on:click="order.status='fulfilled'">Done</button>
+              </td>
+              
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    </div>
+
+ 
+</template>
+
+<script>
+import Hello from './components/Hello'
+import Firebase from 'firebase'
+import toastr from 'toastr'
+
+
+let config = {
+  apiKey: "AIzaSyCbwINaGjth4CO6RmzrPetyeNAx8Tkl0dI",
+  authDomain: "windflower-51a12.firebaseapp.com",
+  databaseURL: "https://windflower-51a12.firebaseio.com",
+  storageBucket: "windflower-51a12.appspot.com",
+  messagingSenderId: "748155869507"
+}
+
+let app = Firebase.initializeApp(config);
+let db = app.database();
+
+let ordersRef = db.ref('orders');
+// console.log(booksRef) ;
+
+export default {
+  name: 'app',
+  firebase: {
+    orders:ordersRef
+  },
+  data (){
+    return {
+      newOrder: {
+        status:'ordered',
+        flower:'',
+        address:'',
+        timing:''
+        
+      }
+    }
+  },
+
+  methods: {
+    addOrder: function(){
+      ordersRef.push(this.newOrder);
+      this.newOrder.flower="";
+      this.newOrder.address="";
+      this.newOrder.timing="";
+    },
+    removeOrder: function(order){
+      console.log(order);
+      ordersRef.child(order['.key']).remove();
+      Tasty.Toast({
+        type: 'success'
+      });
+    }
+
+  }
+}
+
+
+</script>
+
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
