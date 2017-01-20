@@ -1,6 +1,6 @@
-# orderv1
+# Order_MGMT 
 
-> A Vue.js project
+> Order Management/Fullfillment & Data Filtering on VUE
 
 ## Build Setup
 
